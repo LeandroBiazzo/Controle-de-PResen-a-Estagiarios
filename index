@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Presença e Atividades</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #5D5CDE;
+      --primary-dark: #4948c4;
+      --secondary-color: #3B82F6;
+      --secondary-dark: #2563eb;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --info-color: #3b82f6;
+      --body-bg: #f9fafb;
+      --card-bg: #ffffff;
+      --text-color: #111827;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s ease;
+      --farmacia-color: #5D5CDE;
+      --biomedicina-color: #3B82F6;
+      --header-height: 70px;
+    }
+    
+    [data-theme="dark"] {
+      --primary-color: #6366f1;
+      --primary-dark: #5661f5;
+      --body-bg: #111827;
+      --card-bg: #1f2937;
+      --text-color: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-color: #374151;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.16);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    html, body {
+      height: 100%;
+    }
+    
+    body {
+      background-color: var(--body-bg);
+      color: var(--text-color);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      width: 100%;
+    }
+    
+    header {
+      height: var(--header-height);
+      width: 100%;
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+    
+    main {
+      flex: 1;
+      margin-top: var(--header-height);
+      padding: 2rem 0;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    
+    .logo-text h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    
+    .logo-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      font-size: 0.9rem;
+    }
+    
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover, .btn-primary:focus {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .btn-secondary:hover, .btn-secondary:focus {
+      background-color: var(--secondary-dark);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+    }
+    
+    .btn-outline:hover, .btn-outline:focus {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    [data-theme="dark"] .btn-outline:hover, 
+    [data-theme="dark"] .btn-outline:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .card-footer {
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.625rem 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      transition: var(--transition);
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(93, 92, 222, 0.25);
+    }
+    
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -0.75rem;
+    }
+    
+    .col {
+      flex: 1;
+      padding: 0 0.75rem;
+      min-width: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .row {
+        flex-direction: column;
+      }
+      
+      .col {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+    }
+    
+    .course-select {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 600px) {
+      .course-select {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .course-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: var(--transition);
+      background-color: var(--card-bg);
+      border: 2px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .course-option:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .course-option.active {
+      border-color: var(--primary-color);
+    }
+    
+    .course-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    
+    .course-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .course-description {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    
+    .farmacia .course-icon {
+      color: var(--farmacia-color);
+    }
+    
+    .biomedicina .course-icon {
+      color: var(--biomedicina-color);
+    }
+    
+    .screen {
+      display: none;
+    }
+    
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 0.25rem;
+    }
+    
+    .activity-label {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+    
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+    
+    .mt-4 {
+      margin-top: 1rem;
+    }
+    
+    .success-animation {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background-color: rgba(16, 185, 129, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--success-color);
+      font-size: 3rem;
+    }
+    
+    .theme-toggle {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .toast.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast-icon {
+      font-size: 1.5rem;
+    }
+    
+    .toast-success .toast-icon {
+      color: var(--success-color);
+    }
+    
+    .toast-error .toast-icon {
+      color: var(--danger-color);
+    }
+    
+    .toast-body {
+      flex: 1;
+    }
+    
+    .toast-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .toast-message {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
+    .stage-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 576px) {
+      .stage-options {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .stage-option {
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .stage-option:hover {
+      border-color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+    
+    .stage-option-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .stage-option-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    
+    .page-title {
+      margin-bottom: 1.5rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    
+    .text-muted {
+      color: var(--text-muted);
+    }
+    
+    .text-sm {
+      font-size: 0.875rem;
+    }
+    
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+    
+    .confirmation-box {
+      background-color: rgba(16, 185, 129, 0.1);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .confirmation-box p {
+      margin-bottom: 0.5rem;
+    }
+    
+    .welcome-message {
+      background-color: rgba(93, 92, 222, 0.1);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .welcome-icon {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+    }
+    
+    .welcome-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .welcome-content p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
+    .floating-menu {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 90;
+    }
+    
+    .floating-menu .btn {
+      box-shadow: var(--shadow);
+    }
+    
+    @media (max-width: 768px) {
+      .floating-menu {
+        bottom: 1rem;
+        right: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo-container">
+          <div class="logo">E</div>
+          <div class="logo-text">
+            <h1>Controle de Presença</h1>
+            <p>Portal Acadêmico de Estágio</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="theme-toggle" class="theme-toggle btn-icon">
+            <span class="material-icons-round">dark_mode</span>
+          </button>
+          <button id="admin-btn" class="btn btn-outline">
+            <span class="material-icons-round">settings</span>
+            <span class="admin-text">Administração</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Tela de Seleção de Curso -->
+      <div id="course-select-screen" class="screen active">
+        <h1 class="page-title">Selecione seu curso</h1>
+        <div class="course-select">
+          <div class="course-option farmacia" data-course="farmacia">
+            <span class="material-icons-round course-icon">science</span>
+            <h3 class="course-title">Estagiário Farmácia</h3>
+            <p class="course-description">Acesso às atividades de Farmácia Clínica e Laboratório</p>
+          </div>
+          <div class="course-option biomedicina" data-course="biomedicina">
+            <span class="material-icons-round course-icon">biotech</span>
+            <h3 class="course-title">Estagiário Biomedicina</h3>
+            <p class="course-description">Acesso às atividades de Laboratório Clínico</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela Inicial com opções de login/registro -->
+      <div id="home-screen" class="screen">
+        <h1 class="page-title">Bem-vindo <span id="curso-selecionado"></span></h1>
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <div class="text-center mb-4">
+                  <span class="material-icons-round" style="font-size: 3rem; color: var(--primary-color);">person_add</span>
+                  <h3 class="mb-2">Primeiro Acesso</h3>
+                  <p class="text-muted">Crie seu registro para começar a registrar presença</p>
+                </div>
+                <button id="btn-new-user" class="btn btn-primary" style="width: 100%;">Cadastrar-se</button>
+              </div>
+              <div class="col">
+                <div class="text-center mb-4">
+                  <span class="material-icons-round" style="font-size: 3rem; color: var(--primary-color);">login</span>
+                  <h3 class="mb-2">Já tenho cadastro</h3>
+                  <p class="text-muted">Acesse sua conta para registrar presença</p>
+                </div>
+                <button id="btn-login" class="btn btn-primary" style="width: 100%;">Entrar</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button id="btn-back-to-courses" class="btn btn-outline">
+              <span class="material-icons-round">arrow_back</span>
+              Voltar à seleção de curso
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela de Registro -->
+      <div id="register-screen" class="screen">
+        <h1 class="page-title">Cadastro de Novo Aluno</h1>
+        <div class="card">
+          <div class="card-header">
+            <h2>Informações do aluno</h2>
+          </div>
+          <div class="card-body">
+            <form id="register-form">
+              <div class="form-group">
+                <label for="nome" class="form-label">Primeiro e Último nome</label>
+                <input type="text" id="nome" name="nome" required placeholder="Ex: João Silva" class="form-control">
+                <p class="form-hint">Digite apenas seu primeiro e último nome</p>
+              </div>
+              <div class="form-group">
+                <label for="periodo" class="form-label">Período que está cursando</label>
+                <select id="periodo" name="periodo" required class="form-control">
+                  <option value="">Selecione o período</option>
+                  <option value="1º Período">1º Período</option>
+                  <option value="2º Período">2º Período</option>
+                  <option value="3º Período">3º Período</option>
+                  <option value="4º Período">4º Período</option>
+                  <option value="5º Período">5º Período</option>
+                  <option value="6º Período">6º Período</option>
+                  <option value="7º Período">7º Período</option>
+                  <option value="8º Período">8º Período</option>
+                  <option value="9º Período">9º Período</option>
+                  <option value="10º Período">10º Período</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="senha" class="form-label">Senha (4 dígitos)</label>
+                <input type="password" id="senha" name="senha" required maxlength="4" pattern="\d{4}" inputmode="numeric" class="form-control">
+                <p class="form-hint">Digite uma senha de 4 números que seja fácil de lembrar</p>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer">
+            <button id="btn-back-from-register" class="btn btn-outline">Voltar</button>
+            <button id="btn-submit-register" class="btn btn-primary">Cadastrar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela de Login -->
+      <div id="login-screen" class="screen">
+        <h1 class="page-title">Acesso ao Sistema</h1>
+        <div class="card">
+          <div class="card-header">
+            <h2>Credenciais de acesso</h2>
+          </div>
+          <div class="card-body">
+            <form id="login-form">
+              <div class="form-group">
+                <label for="login-nome" class="form-label">Primeiro nome</label>
+                <input type="text" id="login-nome" name="login-nome" required placeholder="Ex: João" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="login-senha" class="form-label">Senha</label>
+                <input type="password" id="login-senha" name="login-senha" required maxlength="4" pattern="\d{4}" inputmode="numeric" class="form-control">
+                <p class="form-hint">Digite sua senha de 4 dígitos</p>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer">
+            <button id="btn-back-from-login" class="btn btn-outline">Voltar</button>
+            <button id="btn-submit-login" class="btn btn-primary">Entrar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela de Boas-vindas -->
+      <div id="welcome-screen" class="screen">
+        <h1 class="page-title">Registro de Presença</h1>
+        
+        <div class="welcome-message">
+          <span class="material-icons-round welcome-icon">waving_hand</span>
+          <div class="welcome-content">
+            <h3>Bem-vindo(a), <span id="student-name">Aluno</span>!</h3>
+            <p>Selecione o tipo de estágio que você está realizando hoje</p>
+          </div>
+        </div>
+        
+        <!-- Opções de Farmácia - ambas opções -->
+        <div id="options-farmacia">
+          <div class="stage-options">
+            <div class="stage-option" id="btn-farmacia-clinica">
+              <div class="stage-option-title">
+                <span class="material-icons-round" style="color: var(--farmacia-color)">medication</span>
+                Estágio Farmácia Clínica
+              </div>
+              <p class="stage-option-desc">Atividades relacionadas ao ambiente de farmácia hospitalar e atendimento clínico</p>
+            </div>
+            <div class="stage-option" id="btn-laboratorio-farm">
+              <div class="stage-option-title">
+                <span class="material-icons-round" style="color: var(--farmacia-color)">science</span>
+                Estágio em Laboratório
+              </div>
+              <p class="stage-option-desc">Atividades relacionadas ao ambiente laboratorial e análises clínicas</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Opções de Biomedicina - apenas laboratório -->
+        <div id="options-biomedicina" style="display: none;">
+          <div class="stage-options">
+            <div class="stage-option" id="btn-laboratorio-bio" style="grid-column: span 2;">
+              <div class="stage-option-title">
+                <span class="material-icons-round" style="color: var(--biomedicina-color)">biotech</span>
+                Estágio em Laboratório
+              </div>
+              <p class="stage-option-desc">Atividades relacionadas ao ambiente laboratorial e análises clínicas</p>
+            </div>
+          </div>
+        </div>
+        
+        <p class="text-muted text-sm text-center mt-4">
+          Ao selecionar um tipo de estágio, seu horário de entrada será registrado automaticamente.
+        </p>
+      </div>
+
+      <!-- Tela de Atividades -->
+      <div id="tasks-screen" class="screen">
+        <h1 class="page-title">Registro de Atividades</h1>
+        <div class="card">
+          <div class="card-header">
+            <h2>Selecione as atividades realizadas</h2>
+            <div>
+              <p id="estagio-info" class="text-muted">
+                <span id="tipo-estagio">-</span> • Entrada: <span id="hora-entrada">-</span>
+              </p>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Checklist para Farmácia Clínica -->
+            <div id="checklist-farmacia" style="display: none;">
+              <div class="checkbox-list">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm1" value="Check List Diário de Conferência de Materiais Disponíveis">
+                  <label for="farm1" class="activity-label">Check List Diário de Conferência de Materiais Disponíveis em todos os ambulatórios</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm2" value="Reposição de Materiais em cada sala">
+                  <label for="farm2" class="activity-label">Reposição de Materiais em cada sala</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm3" value="Reposição de Materiais na farmácia clínica">
+                  <label for="farm3" class="activity-label">Reposição de Materiais na farmácia clínica</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm4" value="Preenchimento de Ficha de Solicitação de materiais do Estoque">
+                  <label for="farm4" class="activity-label">Preenchimento de Ficha de Solicitação de materiais do Estoque</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm5" value="Conferência e Alocação de Itens do Estoque Central">
+                  <label for="farm5" class="activity-label">Conferência e Alocação de Itens que chegaram dentro do Estoque Central</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm6" value="Verificação de Validade dos produtos">
+                  <label for="farm6" class="activity-label">Verificação de Validade dos produtos</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm7" value="Montagem e reposição de Kits">
+                  <label for="farm7" class="activity-label">Montagem e reposição de Kits de coleta de fluidoterapia e Acesso Venoso</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm8" value="Monitoramento e preenchimento de Fichas de Controle de Temperatura">
+                  <label for="farm8" class="activity-label">Monitoramento e preenchimento de Fichas de Controle de Temperatura (Farmácia/Centro Cirúrgico/Estoque)</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm9" value="Conferência de Fichas Anestésicas com Solicitações">
+                  <label for="farm9" class="activity-label">Conferência de Fichas Anestésicas com Solicitações de Medicamentos</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm10" value="Preenchimento de Planilha Livro de Controlados">
+                  <label for="farm10" class="activity-label">Preenchimento de Planilha Livro de Controlados</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="farm11" value="Preenchimentos de Livro Livro de Controlados">
+                  <label for="farm11" class="activity-label">Preenchimentos de Livro Livro de Controlados</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checklist para Laboratório Clínico -->
+            <div id="checklist-laboratorio" style="display: none;">
+              <div class="checkbox-list">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="lab1" value="Processamento de Amostras para Exames Bioquímicos">
+                  <label for="lab1" class="activity-label">Processamento de Amostras para Exames Bioquímicos: Coleta, manipulação, centrifugação e preparo de soros ou plasmas para testes como glicose e enzimas hepáticas.</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="lab2" value="Auxílio na Calibração do Aparelho Bioquímico">
+                  <label for="lab2" class="activity-label">Auxílio na Calibração do Aparelho Bioquímico: Participação na calibração de analisadores e realização de testes de controle de qualidade.</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="lab3" value="Confecção de Esfregaço Sanguíneo">
+                  <label for="lab3" class="activity-label">Confecção de Esfregaço Sanguíneo: Preparação de lâminas para análise microscópica com distribuição adequada das células.</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="lab4" value="Contagem Diferencial de Células Sanguíneas">
+                  <label for="lab4" class="activity-label">Contagem Diferencial de Células Sanguíneas: Identificação e contagem de leucócitos no esfregaço sanguíneo para diagnósticos.</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="lab5" value="Processamento de Amostras para Urinálise">
+                  <label for="lab5" class="activity-label">Processamento de Amostras para Urinálise: Realização de exames físicos, químicos e microscópicos de urina, incluindo análise de sedimentos.</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="lab6" value="Processamento de Amostras para Exame Coproparasitológico">
+                  <label for="lab6" class="activity-label">Processamento de Amostras para Exame Coproparasitológico: Detecção de parasitas intestinais em fezes por técnicas como centrífugo-flutuação.</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="lab7" value="Lavagem de Materiais Utilizados na Rotina">
+                  <label for="lab7" class="activity-label">Lavagem de Materiais Utilizados na Rotina: Limpeza, desinfecção e esterilização de equipamentos e vidrarias laboratoriais.</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button id="btn-checkout" class="btn btn-primary">
+              <span class="material-icons-round">check_circle</span>
+              Registrar Saída
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela de Confirmação -->
+      <div id="confirmation-screen" class="screen">
+        <h1 class="page-title">Registro Concluído!</h1>
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="success-animation">
+              <span class="material-icons-round">check_circle</span>
+            </div>
+            <h2 class="mb-4">Registro de presença salvo com sucesso</h2>
+            <div class="confirmation-box">
+              <p><strong>Data:</strong> <span id="confirm-data"></span></p>
+              <p><strong>Entrada:</strong> <span id="confirm-entrada"></span></p>
+              <p><strong>Saída:</strong> <span id="confirm-saida"></span></p>
+            </div>
+            <p class="text-muted">Obrigado por registrar sua presença e atividades!</p>
+          </div>
+          <div class="card-footer">
+            <button id="btn-restart" class="btn btn-primary">
+              <span class="material-icons-round">home</span>
+              Voltar ao Início
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela de Administração -->
+      <div id="admin-screen" class="screen">
+        <h1 class="page-title">Administração do Sistema</h1>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h2>Configuração da API</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="api-url" class="form-label">URL do Google Apps Script:</label>
+              <input type="text" id="api-url" class="form-control" placeholder="Cole aqui a URL do seu Google Apps Script">
+              <p class="form-hint">Cole a URL completa do Google Apps Script que você publicou (exemplo: https://script.google.com/macros/s/xxxx/exec)</p>
+            </div>
+            <div id="api-status" class="mt-4"></div>
+          </div>
+          <div class="card-footer">
+            <button id="btn-back-from-admin" class="btn btn-outline">Voltar</button>
+            <button id="btn-save-api" class="btn btn-primary">Salvar</button>
+            <button id="btn-test-api" class="btn btn-outline" style="display: none;">Testar Conexão</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="toast" id="toast">
+    <span class="material-icons-round toast-icon"></span>
+    <div class="toast-body">
+      <div class="toast-title"></div>
+      <div class="toast-message"></div>
+    </div>
+  </div>
+
+  <script>
+    // Variáveis globais
+    let currentStudent = null;
+    let entryTime = null;
+    let entryDate = null;
+    let stageType = null;
+    let selectedCourse = null; // 'farmacia' ou 'biomedicina'
+    
+    // URL da API do Google Apps Script
+    let API_URL = localStorage.getItem('apiUrl') || '';
+    
+    // Referências aos elementos
+    const screens = {
+      courseSelect: document.getElementById('course-select-screen'),
+      home: document.getElementById('home-screen'),
+      register: document.getElementById('register-screen'),
+      login: document.getElementById('login-screen'),
+      welcome: document.getElementById('welcome-screen'),
+      tasks: document.getElementById('tasks-screen'),
+      confirmation: document.getElementById('confirmation-screen'),
+      admin: document.getElementById('admin-screen')
+    };
+
+    const elements = {
+      studentName: document.getElementById('student-name'),
+      tipoEstagio: document.getElementById('tipo-estagio'),
+      horaEntrada: document.getElementById('hora-entrada'),
+      confirmData: document.getElementById('confirm-data'),
+      confirmEntrada: document.getElementById('confirm-entrada'),
+      confirmSaida: document.getElementById('confirm-saida'),
+      registerForm: document.getElementById('register-form'),
+      loginForm: document.getElementById('login-form'),
+      apiUrl: document.getElementById('api-url'),
+      apiStatus: document.getElementById('api-status'),
+      testApiBtn: document.getElementById('btn-test-api'),
+      cursoSelecionado: document.getElementById('curso-selecionado'),
+      optionsFarmacia: document.getElementById('options-farmacia'),
+      optionsBiomedicina: document.getElementById('options-biomedicina'),
+      loadingOverlay: document.querySelector('.loading-overlay'),
+      toast: document.getElementById('toast'),
+      themeToggle: document.getElementById('theme-toggle'),
+      themeIcon: document.querySelector('#theme-toggle .material-icons-round')
+    };
+
+    // Elementos de checklist
+    const checklists = {
+      farmacia: document.getElementById('checklist-farmacia'),
+      laboratorio: document.getElementById('checklist-laboratorio')
+    };
+
+    // Função para mostrar uma tela e esconder as outras
+    function showScreen(screenId) {
+      Object.keys(screens).forEach(key => {
+        if (key === screenId) {
+          screens[key].classList.add('active');
+        } else {
+          screens[key].classList.remove('active');
+        }
+      });
+    }
+
+    // Função para mostrar/ocultar o loading overlay
+    function toggleLoading(show) {
+      if (show) {
+        elements.loadingOverlay.classList.add('active');
+      } else {
+        elements.loadingOverlay.classList.remove('active');
+      }
+    }
+
+    // Função para mostrar toast
+    function showToast(title, message, type = 'success') {
+      const toast = elements.toast;
+      const toastTitle = toast.querySelector('.toast-title');
+      const toastMessage = toast.querySelector('.toast-message');
+      const toastIcon = toast.querySelector('.toast-icon');
+      
+      toast.className = 'toast';
+      toast.classList.add(`toast-${type}`);
+      
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      
+      if (type === 'success') {
+        toastIcon.textContent = 'check_circle';
+      } else if (type === 'error') {
+        toastIcon.textContent = 'error';
+      }
+      
+      toast.classList.add('active');
+      
+      setTimeout(() => {
+        toast.classList.remove('active');
+      }, 5000);
+    }
+
+    // Função para formatar data/hora
+    function formatTime(date) {
+      return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function getFormattedDate() {
+      const now = new Date();
+      return {
+        iso: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`,
+        formatted: formatDate(now),
+        time: formatTime(now),
+        dateObj: now
+      };
+    }
+
+    // Verificar se a API está configurada
+    function checkApiConfig() {
+      if (API_URL) {
+        elements.apiUrl.value = API_URL;
+        elements.testApiBtn.style.display = 'inline-flex';
+        return true;
+      } else {
+        elements.testApiBtn.style.display = 'none';
+        return false;
+      }
+    }
+
+    // Funções para comunicação com a API
+    async function callApi(method, params = {}) {
+      if (!API_URL) {
+        throw new Error("URL da API não configurada. Acesse a seção Administração para configurar.");
+      }
+      
+      try {
+        let url, options;
+        
+        if (method === 'GET') {
+          // Construir URL com parâmetros
+          const queryParams = new URLSearchParams(params).toString();
+          url = `${API_URL}?${queryParams}`;
+          
+          options = {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+        } else {
+          // POST request
+          url = API_URL;
+          
+          options = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params)
+          };
+        }
+        
+        const response = await fetch(url, options);
+        
+        if (!response.ok) {
+          throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        return data;
+        
+      } catch (error) {
+        console.error("Erro na chamada da API:", error);
+        throw error;
+      }
+    }
+
+    // Funções de API específicas
+    async function testApiConnection() {
+      toggleLoading(true);
+      elements.apiStatus.innerHTML = `<p style="color: var(--info-color);">Testando conexão...</p>`;
+      
+      try {
+        const result = await callApi('GET', { action: 'getAllAlunos' });
+        
+        if (result && result.success) {
+          elements.apiStatus.innerHTML = `
+            <div style="padding: 1rem; background-color: rgba(16, 185, 129, 0.1); border-radius: 0.5rem; margin-top: 1rem;">
+              <p style="color: var(--success-color); font-weight: 600;">✓ Conexão estabelecida com sucesso!</p>
+              <p class="text-muted" style="margin-top: 0.5rem;">O sistema está conectado à planilha corretamente.</p>
+            </div>
+          `;
+          return true;
+        } else {
+          throw new Error("Resposta inesperada da API");
+        }
+      } catch (error) {
+        elements.apiStatus.innerHTML = `
+          <div style="padding: 1rem; background-color: rgba(239, 68, 68, 0.1); border-radius: 0.5rem; margin-top: 1rem;">
+            <p style="color: var(--danger-color); font-weight: 600;">✗ Erro na conexão</p>
+            <p class="text-muted" style="margin-top: 0.5rem;">${error.message}</p>
+          </div>
+        `;
+        return false;
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    async function cadastrarAluno(aluno) {
+      try {
+        const result = await callApi('POST', {
+          action: 'cadastrarAluno',
+          aluno: {
+            nome: aluno.nome,
+            periodo: aluno.periodo,
+            senha: aluno.senha,
+            curso: aluno.curso
+          }
+        });
+        
+        return result;
+      } catch (error) {
+        console.error("Erro ao cadastrar aluno:", error);
+        throw error;
+      }
+    }
+
+    async function buscarAluno(nome, senha) {
+      try {
+        const result = await callApi('GET', {
+          action: 'getAluno',
+          nome: nome,
+          senha: senha
+        });
+        
+        return result;
+      } catch (error) {
+        console.error("Erro ao buscar aluno:", error);
+        throw error;
+      }
+    }
+
+    async function registrarPresenca(registro) {
+      try {
+        const result = await callApi('POST', {
+          action: 'registrarPresenca',
+          registro: registro
+        });
+        
+        return result;
+      } catch (error) {
+        console.error("Erro ao registrar presença:", error);
+        throw error;
+      }
+    }
+
+    // Funções para registrar seleção de curso
+    function selectCourse(course) {
+      selectedCourse = course;
+      
+      // Atualizar texto na tela inicial
+      elements.cursoSelecionado.textContent = course === 'farmacia' ? 'ao Estágio de Farmácia' : 'ao Estágio de Biomedicina';
+      
+      document.documentElement.style.setProperty('--primary-color', course === 'farmacia' ? '#5D5CDE' : '#3B82F6');
+      
+      showScreen('home');
+    }
+
+    // Funções para registro de entrada/saída
+    function registerEntry(type) {
+      const dateInfo = getFormattedDate();
+      
+      entryDate = dateInfo.formatted;
+      entryTime = dateInfo.time;
+      stageType = type;
+      
+      // Exibir informações na tela de tarefas
+      elements.tipoEstagio.textContent = type === 'farmacia' ? 'Farmácia Clínica' : 'Laboratório Clínico';
+      elements.horaEntrada.textContent = entryTime;
+      
+      // Mostrar checklist apropriado
+      if (type === 'farmacia') {
+        checklists.farmacia.style.display = 'block';
+        checklists.laboratorio.style.display = 'none';
+      } else {
+        checklists.laboratorio.style.display = 'block';
+        checklists.farmacia.style.display = 'none';
+      }
+      
+      showScreen('tasks');
+    }
+
+    async function registerExit() {
+      toggleLoading(true);
+      
+      // Coletar atividades selecionadas
+      let activities = [];
+      
+      if (stageType === 'farmacia') {
+        document.querySelectorAll('#checklist-farmacia input:checked').forEach(checkbox => {
+          activities.push(checkbox.value);
+        });
+      } else {
+        document.querySelectorAll('#checklist-laboratorio input:checked').forEach(checkbox => {
+          activities.push(checkbox.value);
+        });
+      }
+      
+      const exitTime = getFormattedDate().time;
+      
+      // Dados para enviar à API
+      const recordData = {
+        alunoID: currentStudent.id,
+        nome: currentStudent.nome,
+        curso: currentStudent.curso || selectedCourse,
+        data: entryDate,
+        tipoEstagio: stageType === 'farmacia' ? 'Farmácia Clínica' : 'Laboratório Clínico',
+        horaEntrada: entryTime,
+        horaSaida: exitTime,
+        atividades: activities.join(', ')
+      };
+      
+      try {
+        // Enviar para o Google Sheets via API
+        await registrarPresenca(recordData);
+        
+        // Mostrar tela de confirmação
+        elements.confirmData.textContent = entryDate;
+        elements.confirmEntrada.textContent = entryTime;
+        elements.confirmSaida.textContent = exitTime;
+        showScreen('confirmation');
+        
+      } catch (error) {
+        showToast('Erro', 'Não foi possível registrar sua saída: ' + error.message, 'error');
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    // Toggle do tema claro/escuro
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      
+      if (isDark) {
+        document.body.removeAttribute('data-theme');
+        elements.themeIcon.textContent = 'dark_mode';
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.body.setAttribute('data-theme', 'dark');
+        elements.themeIcon.textContent = 'light_mode';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      // Aplicar tema salvo
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        elements.themeIcon.textContent = 'light_mode';
+      }
+      
+      // Verificar configuração da API
+      checkApiConfig();
+      
+      // Adicionar event listeners para elementos reutilizáveis
+      elements.themeToggle.addEventListener('click', toggleTheme);
+      
+      // Seleção de curso
+      document.querySelectorAll('.course-option').forEach(option => {
+        option.addEventListener('click', () => {
+          const course = option.dataset.course;
+          selectCourse(course);
+        });
+      });
+      
+      // Navegação
+      document.getElementById('btn-back-to-courses').addEventListener('click', () => {
+        showScreen('courseSelect');
+      });
+      
+      document.getElementById('btn-new-user').addEventListener('click', () => {
+        if (!checkApiConfig()) {
+          showToast('Configuração Necessária', 'Configure a URL da API primeiro em Administração', 'error');
+          return;
+        }
+        
+        showScreen('register');
+      });
+      
+      document.getElementById('btn-login').addEventListener('click', () => {
+        if (!checkApiConfig()) {
+          showToast('Configuração Necessária', 'Configure a URL da API primeiro em Administração', 'error');
+          return;
+        }
+        
+        showScreen('login');
+      });
+      
+      document.getElementById('btn-back-from-register').addEventListener('click', () => {
+        showScreen('home');
+      });
+      
+      document.getElementById('btn-back-from-login').addEventListener('click', () => {
+        showScreen('home');
+      });
+      
+      // Formulário de registro
+      document.getElementById('btn-submit-register').addEventListener('click', async () => {
+        const nome = document.getElementById('nome').value.trim();
+        const periodo = document.getElementById('periodo').value;
+        const senha = document.getElementById('senha').value.trim();
+        
+        if (!nome || !periodo || !senha || senha.length !== 4) {
+          showToast('Formulário Incompleto', 'Preencha todos os campos corretamente. A senha deve ter 4 dígitos.', 'error');
+          return;
+        }
+        
+        toggleLoading(true);
+        
+        try {
+          const result = await cadastrarAluno({
+            nome,
+            periodo,
+            senha,
+            curso: selectedCourse
+          });
+          
+          if (result.success) {
+            // Cadastro realizado com sucesso
+            currentStudent = {
+              id: result.id,
+              nome: nome,
+              periodo: periodo,
+              senha: senha,
+              curso: selectedCourse
+            };
+            
+            // Extrair primeiro nome para exibição
+            const firstName = currentStudent.nome.split(' ')[0];
+            elements.studentName.textContent = firstName;
+            
+            // Mostrar opções apropriadas baseadas no curso
+            if (selectedCourse === 'farmacia') {
+              elements.optionsFarmacia.style.display = 'block';
+              elements.optionsBiomedicina.style.display = 'none';
+            } else {
+              elements.optionsFarmacia.style.display = 'none';
+              elements.optionsBiomedicina.style.display = 'block';
+            }
+            
+            showScreen('welcome');
+            showToast('Sucesso', 'Cadastro realizado com sucesso!', 'success');
+          } else {
+            throw new Error(result.error || "Erro ao cadastrar");
+          }
+        } catch (error) {
+          showToast('Erro', 'Erro ao processar cadastro: ' + error.message, 'error');
+        } finally {
+          toggleLoading(false);
+        }
+      });
+      
+      // Formulário de login
+      document.getElementById('btn-submit-login').addEventListener('click', async () => {
+        const nome = document.getElementById('login-nome').value.trim();
+        const senha = document.getElementById('login-senha').value.trim();
+        
+        if (!nome || !senha || senha.length !== 4) {
+          showToast('Formulário Incompleto', 'Preencha todos os campos corretamente. A senha deve ter 4 dígitos.', 'error');
+          return;
+        }
+        
+        toggleLoading(true);
+        
+        try {
+          const result = await buscarAluno(nome, senha);
+          
+          if (result.success) {
+            // Login realizado com sucesso
+            currentStudent = {
+              id: result.id,
+              nome: result.nome,
+              periodo: result.periodo,
+              senha: result.senha,
+              curso: result.curso || selectedCourse
+            };
+            
+            // Extrair primeiro nome para exibição
+            const firstName = currentStudent.nome.split(' ')[0];
+            elements.studentName.textContent = firstName;
+            
+            // Mostrar opções apropriadas baseadas no curso
+            if (currentStudent.curso === 'farmacia') {
+              elements.optionsFarmacia.style.display = 'block';
+              elements.optionsBiomedicina.style.display = 'none';
+            } else {
+              elements.optionsFarmacia.style.display = 'none';
+              elements.optionsBiomedicina.style.display = 'block';
+            }
+            
+            showScreen('welcome');
+            showToast('Sucesso', `Bem-vindo(a) de volta, ${firstName}!`, 'success');
+          } else {
+            throw new Error(result.error || "Credenciais inválidas");
+          }
+        } catch (error) {
+          showToast('Erro de Login', 'Erro ao fazer login: ' + error.message, 'error');
+        } finally {
+          toggleLoading(false);
+        }
+      });
+      
+      // Admin 
+      document.getElementById('admin-btn').addEventListener('click', () => {
+        showScreen('admin');
+      });
+      
+      document.getElementById('btn-back-from-admin').addEventListener('click', () => {
+        showScreen('courseSelect');
+      });
+      
+      document.getElementById('btn-save-api').addEventListener('click', () => {
+        const url = elements.apiUrl.value.trim();
+        
+        if (url) {
+          API_URL = url;
+          localStorage.setItem('apiUrl', url);
+          elements.testApiBtn.style.display = 'inline-flex';
+          showToast('Configuração Salva', 'URL da API salva com sucesso!', 'success');
+        } else {
+          showToast('Erro', 'Por favor, insira uma URL válida', 'error');
+        }
+      });
+      
+      document.getElementById('btn-test-api').addEventListener('click', testApiConnection);
+      
+      // Seleção de estágio
+      document.getElementById('btn-farmacia-clinica').addEventListener('click', () => registerEntry('farmacia'));
+      document.getElementById('btn-laboratorio-farm').addEventListener('click', () => registerEntry('laboratorio'));
+      document.getElementById('btn-laboratorio-bio').addEventListener('click', () => registerEntry('laboratorio'));
+      
+      // Registro de saída
+      document.getElementById('btn-checkout').addEventListener('click', registerExit);
+      
+      // Botão de reinício
+      document.getElementById('btn-restart').addEventListener('click', () => {
+        showScreen('courseSelect');
+        currentStudent = null;
+        entryTime = null;
+        entryDate = null;
+        stageType = null;
+        selectedCourse = null;
+        
+        // Limpar checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        
+        // Limpar formulários
+        elements.registerForm.reset();
+        elements.loginForm.reset();
+      });
+      
+      // Restrição de entrada numérica no campo de senha
+      document.getElementById('senha').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').substring(0, 4);
+      });
+      
+      document.getElementById('login-senha').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').substring(0, 4);
+      });
+    });
+  </script>
+</body>
+</html>
